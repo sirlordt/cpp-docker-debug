@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug C++ with Background Server",
+            "name": "Debug Local Binary (compiled in Docker)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/src/main",
@@ -13,6 +13,31 @@
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Compile C++ in Docker",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "Debug C++ with Background Server",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/main",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/src",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -60,3 +85,85 @@
                     "ignoreFailures": true
                 }
             ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerServerAddress": "localhost:7777",
+            "sourceFileMap": {
+                "/home/developer/workspace/src": "${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Manual Debug C++",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/main",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/src",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerServerAddress": "localhost:7777",
+            "sourceFileMap": {
+                "/home/developer/workspace/src": "${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Debug C++ in Docker",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "Build and Start C++ Debug Server",
+            "program": "${workspaceFolder}/src/main",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/src",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerServerAddress": "localhost:7777",
+            "sourceFileMap": {
+                "/home/developer/workspace/src": "${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Debug C in Docker",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "Build and Start C Debug Server",
+            "program": "${workspaceFolder}/src/sample",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/src",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerServerAddress": "localhost:7777",
+            "sourceFileMap": {
+                "/home/developer/workspace/src": "${workspaceFolder}/src"
+            }
+        }
+    ]
+}

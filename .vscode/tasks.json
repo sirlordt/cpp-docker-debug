@@ -2,6 +2,35 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Compile C++ in Docker",
+            "type": "shell",
+            "command": "${workspaceFolder}/compile-in-docker.sh cpp",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Compile C in Docker",
+            "type": "shell",
+            "command": "${workspaceFolder}/compile-in-docker.sh c",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
             "label": "Check Debug Port",
             "type": "shell",
             "command": "${workspaceFolder}/check-debug-port.sh",

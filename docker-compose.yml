@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  cpp-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cpp-dev-container
+    volumes:
+      - ./src:/home/developer/workspace/src
+    ports:
+      - "2222:22"     # SSH
+      - "7777:7777"   # gdbserver
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE   # Required for debugging
+    security_opt:
+      - seccomp:unconfined  # Required for debugging

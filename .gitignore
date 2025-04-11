@@ -1,0 +1,26 @@
+# Compiled binaries
+src/main
+src/sample
+*.o
+*.out
+*.exe
+*.a
+*.so
+*.dll
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Editor backup files
+*~
+*.swp
+*.swo
+
+# VS Code specific files (optional, since we're including .vscode in this repo)
+# .vscode/
+
+# Docker related
+.env

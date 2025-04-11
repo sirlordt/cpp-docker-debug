@@ -1,0 +1,117 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Check Debug Port",
+            "type": "shell",
+            "command": "${workspaceFolder}/check-debug-port.sh",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build and Start C++ Debug Server",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main && gdbserver :7777 ./main'",
+            "isBackground": true,
+            "dependsOn": ["Check Debug Port", "Build C++ Project"],
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": ".",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "."
+                }
+            },
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Build and Start C Debug Server",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make sample && gdbserver :7777 ./sample'",
+            "isBackground": true,
+            "dependsOn": ["Check Debug Port", "Build C Project"],
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": ".",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "."
+                }
+            },
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Build C++ Project",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build C Project",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make sample'",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Start C++ Debug Server",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && gdbserver :7777 ./main'",
+            "isBackground": true,
+            "dependsOn": ["Check Debug Port"],
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": ".",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "."
+                }
+            }
+        },
+        {
+            "label": "Start C Debug Server",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && gdbserver :7777 ./sample'",
+            "isBackground": true,
+            "dependsOn": ["Check Debug Port"],
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": ".",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "."
+                }
+            }
+        }
+    ]
+}

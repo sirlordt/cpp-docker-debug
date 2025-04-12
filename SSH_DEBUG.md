@@ -1,132 +1,132 @@
 # Debugging C/C++ Programs in Docker via SSH
 
-Esta guía explica cómo depurar programas C/C++ directamente dentro del contenedor Docker utilizando SSH para la comunicación entre VSCode y GDB.
+This guide explains how to debug C/C++ programs directly inside the Docker container using SSH for communication between VSCode and GDB.
 
-## Visión general
+## Overview
 
-Este enfoque ofrece varias ventajas:
-- El código se compila y depura en el mismo entorno (contenedor Docker)
-- Comunicación directa entre VSCode y GDB dentro del contenedor
-- No es necesario copiar binarios entre el contenedor y el host
-- Los puntos de interrupción funcionan de manera confiable en VSCode
+This approach offers several advantages:
+- Code is compiled and debugged in the same environment (Docker container)
+- Direct communication between VSCode and GDB inside the container
+- No need to copy binaries between the container and host
+- Breakpoints work reliably in VSCode
 
-## Requisitos previos
+## Prerequisites
 
-El contenedor Docker ya está configurado con:
-- Servidor SSH instalado y configurado
-- Puerto 22 en el contenedor mapeado al puerto 2222 en el host
-- Un usuario llamado 'developer' con contraseña 'password'
+The Docker container is already configured with:
+- SSH server installed and configured
+- Port 22 in the container mapped to port 2222 on the host
+- A user named 'developer' with password 'password'
 
-## Configuración inicial
+## Initial Setup
 
-### Opción 1: Configuración automática (recomendada)
+### Option 1: Automatic Setup (Recommended)
 
-Usa el script `setup-ssh-debug.sh` para configurar automáticamente todo lo necesario:
+Use the `setup-ssh-debug.sh` script to automatically configure everything needed:
 
 ```bash
 ./setup-ssh-debug.sh
 ```
 
-Este script:
-- Crea el directorio ~/.ssh y establece los permisos adecuados
-- Añade la clave del host del contenedor Docker a known_hosts
-- Instala sshpass si no está instalado
-- Verifica que el contenedor Docker está en ejecución
-- Comprueba que el servidor SSH está funcionando en el contenedor
-- Prueba la conexión SSH
-- Compila el programa C++
+This script:
+- Creates the ~/.ssh directory and sets appropriate permissions
+- Adds the Docker container's host key to known_hosts
+- Installs sshpass if not already installed
+- Verifies that the Docker container is running
+- Checks that the SSH server is running in the container
+- Tests the SSH connection
+- Builds the C++ program
 
-### Opción 2: Configuración manual
+### Option 2: Manual Setup
 
-Si prefieres configurar todo manualmente, sigue estos pasos:
+If you prefer to configure everything manually, follow these steps:
 
-#### 1. Preparar el entorno SSH en el host
+#### 1. Prepare the SSH environment on the host
 
-Para que la depuración vía SSH funcione correctamente, necesitamos configurar algunas cosas en el sistema host:
+For SSH debugging to work correctly, we need to configure some things on the host system:
 
 ```bash
-# Crear el directorio ~/.ssh si no existe y establecer permisos adecuados
+# Create the ~/.ssh directory if it doesn't exist and set appropriate permissions
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 
-# Añadir la clave del host del contenedor Docker a known_hosts
+# Add the Docker container's host key to known_hosts
 ssh-keyscan -p 2222 localhost >> ~/.ssh/known_hosts
 ```
 
-#### 2. Instalar sshpass
+#### 2. Install sshpass
 
-Para la autenticación automática por contraseña, necesitamos instalar `sshpass`:
+For automatic password authentication, we need to install `sshpass`:
 
 ```bash
 sudo apt-get update && sudo apt-get install -y sshpass
 ```
 
-### Scripts de ayuda
+### Helper Scripts
 
-El proyecto incluye varios scripts para facilitar este flujo de trabajo:
+The project includes several scripts to facilitate this workflow:
 
-- `setup-ssh-debug.sh`: Configura automáticamente todo lo necesario para la depuración vía SSH
-- `test-ssh.sh`: Verifica que la conexión SSH al contenedor funciona correctamente
-- `test-gdb-ssh.sh`: Prueba la depuración con GDB a través de SSH
-- Otros scripts de las aproximaciones anteriores siguen disponibles si los necesitas
+- `setup-ssh-debug.sh`: Automatically configures everything needed for SSH debugging
+- `test-ssh.sh`: Verifies that the SSH connection to the container works correctly
+- `test-gdb-ssh.sh`: Tests debugging with GDB via SSH
+- Other scripts from previous approaches are still available if needed
 
-## Flujo de trabajo
+## Workflow
 
-### 1. Verificar la conexión SSH
+### 1. Verify the SSH Connection
 
-Usa el script `test-ssh.sh` para verificar que SSH está funcionando en el contenedor:
+Use the `test-ssh.sh` script to verify that SSH is working in the container:
 
 ```bash
 ./test-ssh.sh
 ```
 
-Este script:
-- Crea el directorio ~/.ssh si no existe
-- Añade la clave del host del contenedor a known_hosts
-- Instala sshpass si no está instalado
-- Verifica que el contenedor Docker está en ejecución
-- Comprueba que el servidor SSH está funcionando en el contenedor
-- Proporciona información de conexión
+This script:
+- Creates the ~/.ssh directory if it doesn't exist
+- Adds the container's host key to known_hosts
+- Installs sshpass if not installed
+- Verifies that the Docker container is running
+- Checks that the SSH server is running in the container
+- Provides connection information
 
-También puedes probar la conexión SSH manualmente:
+You can also test the SSH connection manually:
 
 ```bash
 sshpass -p "password" ssh developer@localhost -p 2222
 ```
 
-### 2. Depurar el programa vía SSH
+### 2. Debug the Program via SSH
 
-En VSCode:
+In VSCode:
 
-1. Establece puntos de interrupción en tu código haciendo clic en el margen izquierdo (gutter)
-2. Selecciona la configuración "Debug C++ in Docker via SSH" del menú Run and Debug
-3. Inicia la depuración haciendo clic en el botón verde de play o presionando F5
+1. Set breakpoints in your code by clicking in the left margin (gutter)
+2. Select the "Debug C++ in Docker via SSH" configuration from the Run and Debug menu
+3. Start debugging by clicking the green play button or pressing F5
 
-El depurador:
-- Compilará automáticamente el código en Docker
-- Se conectará al contenedor vía SSH
-- Lanzará GDB dentro del contenedor
-- Se adjuntará al programa
-- Se detendrá en tus puntos de interrupción
+The debugger will:
+- Automatically build the code in Docker
+- Connect to the container via SSH
+- Launch GDB inside the container
+- Attach to the program
+- Stop at your breakpoints
 
-### 3. Editar y repetir
+### 3. Edit and Repeat
 
-Después de hacer cambios en tu código:
+After making changes to your code:
 
-1. El depurador reconstruirá automáticamente el código en Docker cuando inicies la depuración nuevamente
-2. También puedes compilar manualmente el código usando la tarea "Build C++ in Docker"
+1. The debugger will automatically rebuild the code in Docker when you start debugging again
+2. You can also manually build the code using the "Build C++ in Docker" task
 
-## Cómo funciona
+## How It Works
 
-Este enfoque utiliza la característica "pipe transport" de VSCode para comunicarse con GDB a través de SSH:
+This approach uses VSCode's "pipe transport" feature to communicate with GDB over SSH:
 
-1. VSCode lanza una conexión SSH al contenedor usando sshpass para la autenticación automática
-2. Los comandos se envían a GDB dentro del contenedor a través de la conexión SSH
-3. GDB dentro del contenedor tiene acceso directo al programa y sus símbolos
-4. Los puntos de interrupción y otras características de depuración funcionan de manera confiable porque no hay una capa intermedia como gdbserver
+1. VSCode launches an SSH connection to the container using sshpass for automatic authentication
+2. Commands are sent to GDB inside the container through the SSH connection
+3. GDB inside the container has direct access to the program and its symbols
+4. Breakpoints and other debugging features work reliably because there's no intermediate layer like gdbserver
 
-### Configuración técnica en launch.json
+### Technical Configuration in launch.json
 
-La configuración en `launch.json` utiliza `sshpass` para la autenticación automática:
+The configuration in `launch.json` uses `sshpass` for automatic authentication:
 
 ```json
 "pipeTransport": {
@@ -148,67 +148,67 @@ La configuración en `launch.json` utiliza `sshpass` para la autenticación auto
 }
 ```
 
-## Solución de problemas
+## Troubleshooting
 
-Si encuentras problemas:
+If you encounter issues:
 
-1. Asegúrate de que el contenedor Docker está en ejecución:
+1. Make sure the Docker container is running:
    ```bash
    docker ps | grep cpp-dev-container
    ```
 
-2. Si el contenedor no está en ejecución, inícialo:
+2. If the container is not running, start it:
    ```bash
    docker-compose up -d
    ```
 
-3. Verifica que SSH está funcionando:
+3. Verify that SSH is working:
    ```bash
    ./test-ssh.sh
    ```
 
-4. Prueba la depuración con GDB vía SSH:
+4. Test debugging with GDB via SSH:
    ```bash
    ./test-gdb-ssh.sh
    ```
 
-5. Si no puedes conectarte vía SSH, verifica los logs de Docker:
+5. If you can't connect via SSH, check the Docker logs:
    ```bash
    docker logs cpp-dev-container
    ```
 
-6. Asegúrate de que el servidor SSH está en ejecución en el contenedor:
+6. Make sure the SSH server is running in the container:
    ```bash
    docker exec cpp-dev-container pgrep sshd
    ```
 
-7. Si el servidor SSH no está en ejecución, inícialo:
+7. If the SSH server is not running, start it:
    ```bash
    docker exec cpp-dev-container /usr/sbin/sshd
    ```
 
-8. Si tienes problemas con la autenticación SSH, asegúrate de que:
-   - El directorio ~/.ssh existe y tiene los permisos correctos
-   - La clave del host del contenedor está en known_hosts
-   - sshpass está instalado
+8. If you're having issues with SSH authentication, make sure:
+   - The ~/.ssh directory exists and has the correct permissions
+   - The container's host key is in known_hosts
+   - sshpass is installed
 
-## Comparación con otros enfoques
+## Comparison with Other Approaches
 
-Este proyecto ahora soporta tres enfoques diferentes de depuración:
+This project now supports three different debugging approaches:
 
-1. **Enfoque SSH (esta guía)**:
-   - Depurar directamente dentro del contenedor vía SSH
-   - Pros: Comunicación directa con GDB, puntos de interrupción confiables
-   - Cons: Requiere configuración SSH
+1. **SSH Approach (this guide)**:
+   - Debug directly inside the container via SSH
+   - Pros: Direct communication with GDB, reliable breakpoints
+   - Cons: Requires SSH setup
 
-2. **Enfoque de binario local**:
-   - Compilar en Docker, copiar el binario al host, depurar localmente
-   - Pros: Simple, puntos de interrupción confiables
-   - Cons: El binario se ejecuta en un entorno diferente al de compilación
+2. **Local Binary Approach**:
+   - Compile in Docker, copy binary to host, debug locally
+   - Pros: Simple, reliable breakpoints
+   - Cons: Binary runs in a different environment than where it was compiled
 
-3. **Enfoque gdbserver**:
-   - Usar gdbserver dentro del contenedor
-   - Pros: Depurar en el mismo entorno que la compilación
-   - Cons: Puntos de interrupción menos confiables debido a la comunicación indirecta
+3. **gdbserver Approach**:
+   - Use gdbserver inside the container
+   - Pros: Debug in the same environment as compilation
+   - Cons: Less reliable breakpoints due to indirect communication
 
-Elige el enfoque que mejor se adapte a tus necesidades y flujo de trabajo.
+Choose the approach that best fits your needs and workflow.

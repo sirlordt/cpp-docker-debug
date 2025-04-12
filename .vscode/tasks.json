@@ -4,7 +4,7 @@
         {
             "label": "Build C++ in Docker",
             "type": "shell",
-            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main'",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build . --target main'",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -20,7 +20,20 @@
         {
             "label": "Build C in Docker",
             "type": "shell",
-            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make sample'",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build . --target sample'",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Clean Build in Docker",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && rm -rf build && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build .'",
             "group": "build",
             "presentation": {
                 "reveal": "always",

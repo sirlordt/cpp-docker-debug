@@ -35,7 +35,7 @@ int main() {
     // Call a function that the compiler can't optimize away
     breakpoint_function(27); // Set breakpoint here (line 27)
     
-    std::cout << "C++ Debugging Demo" << std::endl;
+    std::cout << "C++ Debugging Demo 2025-01" << std::endl;
     
     // Call a function that the compiler can't optimize away
     breakpoint_function(33); // Set breakpoint here (line 33)

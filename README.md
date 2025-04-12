@@ -15,7 +15,9 @@ This approach offers several advantages:
 - `src/`: Source code directory
   - `main.cpp`: Sample C++ program
   - `sample.c`: Sample C program
-  - `Makefile`: Makefile for building the programs
+  - `CMakeLists.txt`: CMake configuration for building the programs
+- `CMakeLists.txt`: Main CMake configuration
+- `conanfile.txt`: Conan configuration for dependency management
 - `Dockerfile`: Docker configuration for the development environment
 - `docker-compose.yml`: Docker Compose configuration
 - `.vscode/`: VSCode configuration
@@ -23,6 +25,8 @@ This approach offers several advantages:
   - `tasks.json`: Build tasks
 - Scripts:
   - `setup-ssh-debug.sh`: Setup script for SSH debugging
+  - `build.sh`: Script for building the programs
+  - `run.sh`: Script for running the programs
   - `test-ssh.sh`: Test SSH connection
   - `test-gdb-ssh.sh`: Test GDB debugging via SSH
 - Documentation:
@@ -36,6 +40,44 @@ This approach offers several advantages:
 - Docker and Docker Compose
 - Visual Studio Code with C/C++ extension
 - sshpass (will be installed automatically by the setup script if needed)
+
+The Docker environment includes:
+- CMake (latest version 3.28.3)
+- Conan (latest version 2.x, installed with pip)
+- GDB and other development tools
+
+### Dependency Management with Conan
+
+This project uses Conan 2.x for dependency management. The `conanfile.txt` file in the root directory defines the project dependencies and generators:
+
+```
+[requires]
+# Add your dependencies here, for example:
+# boost/1.79.0
+# fmt/9.1.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[options]
+# Specify options for packages here
+```
+
+To add a new dependency:
+
+1. Add it to the `[requires]` section in `conanfile.txt`
+2. Update the CMakeLists.txt to find and link the package:
+   ```cmake
+   find_package(PackageName REQUIRED)
+   target_link_libraries(your_target PackageName::PackageName)
+   ```
+
+### Build System with CMake
+
+The project uses CMake as the build system. The main `CMakeLists.txt` file in the root directory sets up the project, and the `src/CMakeLists.txt` file defines the executables.
+
+The build process is integrated with Conan, which generates the necessary CMake files for dependency management.
 
 ### Setup
 

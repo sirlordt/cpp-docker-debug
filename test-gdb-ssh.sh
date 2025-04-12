@@ -19,7 +19,7 @@ echo "Testing GDB debugging via SSH..."
 
 # First, build the C++ program
 echo "Building C++ program..."
-docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main'
+docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build . --target main'
 
 # Create a temporary GDB commands file
 cat > gdb_commands.txt << EOF
@@ -43,11 +43,11 @@ EOF
 
 # Copy the GDB commands file to the Docker container
 echo "Copying GDB commands file to Docker container..."
-docker cp gdb_commands.txt cpp-dev-container:/home/developer/workspace/src/
+docker cp gdb_commands.txt cpp-dev-container:/home/developer/workspace/build/bin/
 
 # Run GDB via SSH
 echo "Running GDB via SSH..."
-sshpass -p "password" ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null developer@localhost "cd /home/developer/workspace/src && gdb -x gdb_commands.txt ./main"
+sshpass -p "password" ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null developer@localhost "cd /home/developer/workspace/build/bin && gdb -x gdb_commands.txt ./main"
 
 # Check the exit code
 if [ $? -eq 0 ]; then

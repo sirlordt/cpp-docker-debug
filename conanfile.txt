@@ -1,0 +1,17 @@
+[requires]
+# Add dependencies here, for example:
+# boost/1.79.0
+# fmt/9.1.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[options]
+# Specify options for packages here, for example:
+# boost:shared=True
+
+[imports]
+# Import specific files from dependencies, for example:
+# bin, *.dll -> ./bin # Copies all dll files from packages bin folder to project bin folder
+# lib, *.dylib* -> ./bin # Copies all dylib files from packages lib folder to project bin folder

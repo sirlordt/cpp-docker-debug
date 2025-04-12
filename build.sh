@@ -34,17 +34,17 @@ fi
 case "$1" in
     c)
         echo "Building C program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make sample'
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build . --target sample'
         echo "C program built successfully."
         ;;
     cpp)
         echo "Building C++ program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main'
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build . --target main'
         echo "C++ program built successfully."
         ;;
     all)
         echo "Building all programs..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make all'
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build .'
         echo "All programs built successfully."
         ;;
     *)

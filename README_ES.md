@@ -15,7 +15,9 @@ Este enfoque ofrece varias ventajas:
 - `src/`: Directorio de código fuente
   - `main.cpp`: Programa de ejemplo en C++
   - `sample.c`: Programa de ejemplo en C
-  - `Makefile`: Makefile para compilar los programas
+  - `CMakeLists.txt`: Configuración de CMake para compilar los programas
+- `CMakeLists.txt`: Configuración principal de CMake
+- `conanfile.txt`: Configuración de Conan para gestionar dependencias
 - `Dockerfile`: Configuración de Docker para el entorno de desarrollo
 - `docker-compose.yml`: Configuración de Docker Compose
 - `.vscode/`: Configuración de VSCode
@@ -23,6 +25,8 @@ Este enfoque ofrece varias ventajas:
   - `tasks.json`: Tareas de compilación
 - Scripts:
   - `setup-ssh-debug.sh`: Script de configuración para depuración SSH
+  - `build.sh`: Script para compilar los programas
+  - `run.sh`: Script para ejecutar los programas
   - `test-ssh.sh`: Prueba de conexión SSH
   - `test-gdb-ssh.sh`: Prueba de depuración GDB vía SSH
 - Documentación:
@@ -36,6 +40,44 @@ Este enfoque ofrece varias ventajas:
 - Docker y Docker Compose
 - Visual Studio Code con extensión C/C++
 - sshpass (será instalado automáticamente por el script de configuración si es necesario)
+
+El entorno Docker incluye:
+- CMake (última versión 3.28.3)
+- Conan (última versión 2.x, instalado con pip)
+- GDB y otras herramientas de desarrollo
+
+### Gestión de dependencias con Conan
+
+Este proyecto utiliza Conan 2.x para la gestión de dependencias. El archivo `conanfile.txt` en el directorio raíz define las dependencias del proyecto y los generadores:
+
+```
+[requires]
+# Añade tus dependencias aquí, por ejemplo:
+# boost/1.79.0
+# fmt/9.1.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[options]
+# Especifica opciones para los paquetes aquí
+```
+
+Para añadir una nueva dependencia:
+
+1. Añádela a la sección `[requires]` en `conanfile.txt`
+2. Actualiza el CMakeLists.txt para encontrar y enlazar el paquete:
+   ```cmake
+   find_package(NombrePaquete REQUIRED)
+   target_link_libraries(tu_objetivo NombrePaquete::NombrePaquete)
+   ```
+
+### Sistema de compilación con CMake
+
+El proyecto utiliza CMake como sistema de compilación. El archivo `CMakeLists.txt` principal en el directorio raíz configura el proyecto, y el archivo `src/CMakeLists.txt` define los ejecutables.
+
+El proceso de compilación está integrado con Conan, que genera los archivos CMake necesarios para la gestión de dependencias.
 
 ### Configuración
 

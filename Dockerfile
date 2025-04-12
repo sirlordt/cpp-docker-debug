@@ -6,7 +6,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install necessary packages for C/C++ development and debugging
 RUN apt-get update && apt-get install -y \
     build-essential \
-    cmake \
     gdb \
     gdbserver \
     git \
@@ -15,8 +14,18 @@ RUN apt-get update && apt-get install -y \
     openssh-server \
     rsync \
     vim \
+    python3 \
+    python3-pip \
+    python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install latest CMake
+RUN wget -qO- "https://cmake.org/files/v3.28/cmake-3.28.3-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+
+# Install latest Conan using pip
+RUN pip3 install --upgrade pip && \
+    pip3 install conan
 
 # Set up SSH for remote debugging
 RUN mkdir /var/run/sshd

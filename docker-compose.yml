@@ -8,6 +8,8 @@ services:
     container_name: cpp-dev-container
     volumes:
       - ./src:/home/developer/workspace/src
+      - ./CMakeLists.txt:/home/developer/workspace/CMakeLists.txt
+      - ./conanfile.txt:/home/developer/workspace/conanfile.txt
     ports:
       - "2222:22"     # SSH
       - "7777:7777"   # gdbserver

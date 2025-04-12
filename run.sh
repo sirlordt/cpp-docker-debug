@@ -33,11 +33,11 @@ fi
 case "$1" in
     c)
         echo "Running C program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && ./sample'
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/build/bin && ./sample'
         ;;
     cpp)
         echo "Running C++ program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && ./main'
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/build/bin && ./main'
         ;;
     *)
         usage

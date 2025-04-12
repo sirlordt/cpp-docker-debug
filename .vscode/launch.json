@@ -62,39 +62,13 @@
             "preLaunchTask": "Build C++ in Docker"
         },
         {
-            "name": "Debug Local Binary (compiled in Docker)",
+            "name": "Debug C in Docker via SSH",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/src/main",
+            "program": "/home/developer/workspace/src/sample",
             "args": [],
             "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/src",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "Compile C++ in Docker",
-            "miDebuggerPath": "/usr/bin/gdb"
-        },
-        {
-            "name": "Debug C++ with Background Server",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/main",
-            "args": [],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/src",
+            "cwd": "/home/developer/workspace/src",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -123,107 +97,29 @@
                     "description": "Enable target async mode",
                     "text": "-gdb-set target-async on",
                     "ignoreFailures": true
-                },
-                {
-                    "description": "Skip standard library files",
-                    "text": "-interpreter-exec console \"skip -gfi /usr/include/c++/*\"",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set breakpoint at main.cpp:27",
-                    "text": "-break-insert -f main.cpp:27",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set breakpoint at main.cpp:33",
-                    "text": "-break-insert -f main.cpp:33",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set breakpoint at main.cpp:45",
-                    "text": "-break-insert -f main.cpp:45",
-                    "ignoreFailures": true
                 }
             ],
-            "miDebuggerPath": "/usr/bin/gdb",
-            "miDebuggerServerAddress": "localhost:7777",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "sshpass",
+                "pipeArgs": [
+                    "-p",
+                    "password",
+                    "ssh",
+                    "-p", 
+                    "2222", 
+                    "-o", 
+                    "StrictHostKeyChecking=no",
+                    "-o",
+                    "UserKnownHostsFile=/dev/null",
+                    "developer@localhost"
+                ],
+                "debuggerPath": "/usr/bin/gdb"
+            },
             "sourceFileMap": {
                 "/home/developer/workspace/src": "${workspaceFolder}/src"
-            }
-        },
-        {
-            "name": "Manual Debug C++",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/main",
-            "args": [],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/src",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "miDebuggerPath": "/usr/bin/gdb",
-            "miDebuggerServerAddress": "localhost:7777",
-            "sourceFileMap": {
-                "/home/developer/workspace/src": "${workspaceFolder}/src"
-            }
-        },
-        {
-            "name": "Debug C++ in Docker",
-            "type": "cppdbg",
-            "request": "launch",
-            "preLaunchTask": "Build and Start C++ Debug Server",
-            "program": "${workspaceFolder}/src/main",
-            "args": [],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/src",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "miDebuggerPath": "/usr/bin/gdb",
-            "miDebuggerServerAddress": "localhost:7777",
-            "sourceFileMap": {
-                "/home/developer/workspace/src": "${workspaceFolder}/src"
-            }
-        },
-        {
-            "name": "Debug C in Docker",
-            "type": "cppdbg",
-            "request": "launch",
-            "preLaunchTask": "Build and Start C Debug Server",
-            "program": "${workspaceFolder}/src/sample",
-            "args": [],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/src",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "miDebuggerPath": "/usr/bin/gdb",
-            "miDebuggerServerAddress": "localhost:7777",
-            "sourceFileMap": {
-                "/home/developer/workspace/src": "${workspaceFolder}/src"
-            }
+            },
+            "preLaunchTask": "Build C in Docker"
         }
     ]
 }

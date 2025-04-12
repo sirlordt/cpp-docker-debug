@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to run C/C++ programs in the Docker container without debugging
+# Script to run C/C++ programs in the Docker container
 
 # Check if Docker is running
 if ! docker info > /dev/null 2>&1; then
@@ -32,12 +32,12 @@ fi
 
 case "$1" in
     c)
-        echo "Building and running C program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make sample && ./sample'
+        echo "Running C program..."
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && ./sample'
         ;;
     cpp)
-        echo "Building and running C++ program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main && ./main'
+        echo "Running C++ program..."
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && ./main'
         ;;
     *)
         usage

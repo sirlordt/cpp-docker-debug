@@ -35,17 +35,17 @@ case "$1" in
     c)
         echo "Building C program..."
         docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make sample'
-        echo "C program built successfully!"
+        echo "C program built successfully."
         ;;
     cpp)
         echo "Building C++ program..."
         docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main'
-        echo "C++ program built successfully!"
+        echo "C++ program built successfully."
         ;;
     all)
         echo "Building all programs..."
         docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make all'
-        echo "All programs built successfully!"
+        echo "All programs built successfully."
         ;;
     *)
         usage

@@ -12,6 +12,7 @@ services:
       - ./conanfile.txt:/home/developer/workspace/conanfile.txt
       - ./.build_env:/home/developer/workspace/.build_env
       - ./logs:/home/developer/workspace/build/bin/logs
+      - ./.env:/home/developer/workspace/build/bin/.env
     ports:
       - "2222:22"     # SSH
       - "7777:7777"   # gdbserver

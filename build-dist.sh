@@ -256,8 +256,8 @@ RUN mkdir -p /app/${App_Name}/logs
 # Copy the executable (using the symlink for backward compatibility)
 COPY ./build/bin/main /app/${App_Name}/${App_Name}
 
-# Copy the .env file
-COPY ./.env /app/${App_Name}/.env
+# Copy the .env_dist file
+COPY ./.env_dist /app/${App_Name}/.env
 
 # Install dependencies
 # Automatically detected dependencies for the executable and sanitizers

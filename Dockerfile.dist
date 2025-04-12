@@ -5,17 +5,18 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Define app name and maintainer for both build and runtime
 ENV App_Name="my_cpp_app"
-ENV App_Version="2025-04-12_12-27-02_PM_-0700"
-ENV App_Package_Dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04;libubsan1:12.3.0-1ubuntu1~22.04;perl-modules-5.34:5.34.0-3ubuntu1.3"
+ENV App_Version="2025-04-12_01-31-26_PM_-0700"
+ENV App_Package_Dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04;libubsan1:12.3.0-1ubuntu1~22.04"
 ENV App_Maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
+ENV App_Description="My super c++ app"
 ENV App_Path="/app/my_cpp_app/my_cpp_app"
 
 # Add metadata
 LABEL maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
-LABEL version="2025-04-12_12-27-02_PM_-0700"
-LABEL description="C++ application for debugging demonstration"
-LABEL app.version="2025-04-12_12-27-02_PM_-0700"
-LABEL app.dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04;libubsan1:12.3.0-1ubuntu1~22.04;perl-modules-5.34:5.34.0-3ubuntu1.3"
+LABEL version="2025-04-12_01-31-26_PM_-0700"
+LABEL description="My super c++ app"
+LABEL app.version="2025-04-12_01-31-26_PM_-0700"
+LABEL app.dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04;libubsan1:12.3.0-1ubuntu1~22.04"
 LABEL app.maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
 LABEL app.path="/app/my_cpp_app/my_cpp_app"
 
@@ -24,6 +25,9 @@ RUN mkdir -p /app/my_cpp_app/logs
 
 # Copy the executable (using the symlink for backward compatibility)
 COPY ./build/bin/main /app/my_cpp_app/my_cpp_app
+
+# Copy the .env_dist file
+COPY ./.env_dist /app/my_cpp_app/.env
 
 # Install dependencies
 # Automatically detected dependencies for the executable and sanitizers
@@ -36,13 +40,11 @@ RUN apt-get update && \
     libgcc-s1 \
     libstdc++6 \
     libubsan1 \
-    perl-modules-5.34 \
 # Package versions:
 # - libc6: 2.35-0ubuntu3.9
 # - libgcc-s1: 12.3.0-1ubuntu1~22.04
 # - libstdc++6: 12.3.0-1ubuntu1~22.04
 # - libubsan1: 12.3.0-1ubuntu1~22.04
-# - perl-modules-5.34: 5.34.0-3ubuntu1.3
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

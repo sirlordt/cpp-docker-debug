@@ -24,6 +24,7 @@ src/sample
 
 # Docker related
 .env
+.env_dist
 
 logs/*
 build/*

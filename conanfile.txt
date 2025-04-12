@@ -1,7 +1,7 @@
 [requires]
 # Add dependencies here, for example:
+fmt/9.1.0
 # boost/1.79.0
-# fmt/9.1.0
 
 [generators]
 CMakeDeps

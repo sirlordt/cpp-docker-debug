@@ -7,6 +7,7 @@ services:
     volumes:
       - ./src:/home/developer/workspace/src
       - ./build:/home/developer/workspace/build
+      - ./build/conan/cache:/home/developer/.conan2
       - ./CMakeLists.txt:/home/developer/workspace/CMakeLists.txt
       - ./conanfile.txt:/home/developer/workspace/conanfile.txt
       - ./.build_env:/home/developer/workspace/.build_env

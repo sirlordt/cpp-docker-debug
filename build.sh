@@ -17,6 +17,13 @@ if ! docker ps | grep -q cpp-dev-container; then
     sleep 3
 fi
 
+# Check if Conan default profile exists, if not create it
+echo "Checking Conan default profile..."
+if ! docker exec -u developer cpp-dev-container test -f /home/developer/.conan2/profiles/default; then
+    echo "Creating Conan default profile..."
+    docker exec -u developer cpp-dev-container conan profile detect
+fi
+
 # Function to display usage
 usage() {
     echo "Usage: $0 [c|cpp|all]"

@@ -27,6 +27,7 @@ add_custom_target(main_symlink ALL DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mai
 
 # C++ executable
 add_executable(${PROJECT_NAME} main.cpp)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)  # Explicitly set C++23 for this target
 target_compile_options(${PROJECT_NAME} PRIVATE -g -Wall -fsanitize=address,undefined,leak)
 target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined,leak)
 add_dependencies(main_symlink ${PROJECT_NAME})

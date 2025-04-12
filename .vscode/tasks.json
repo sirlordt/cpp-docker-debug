@@ -2,6 +2,22 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Build C++ in Docker",
+            "type": "shell",
+            "command": "docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/src && make main'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
             "label": "Compile C++ in Docker",
             "type": "shell",
             "command": "${workspaceFolder}/compile-in-docker.sh cpp",

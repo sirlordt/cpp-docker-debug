@@ -2,6 +2,66 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug C++ in Docker via SSH",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/developer/workspace/src/main",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "/home/developer/workspace/src",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Enable pending breakpoints",
+                    "text": "-gdb-set breakpoint pending on",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Enable non-stop mode",
+                    "text": "-gdb-set non-stop on",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Enable target async mode",
+                    "text": "-gdb-set target-async on",
+                    "ignoreFailures": true
+                }
+            ],
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "sshpass",
+                "pipeArgs": [
+                    "-p",
+                    "password",
+                    "ssh",
+                    "-p", 
+                    "2222", 
+                    "-o", 
+                    "StrictHostKeyChecking=no",
+                    "-o",
+                    "UserKnownHostsFile=/dev/null",
+                    "developer@localhost"
+                ],
+                "debuggerPath": "/usr/bin/gdb"
+            },
+            "sourceFileMap": {
+                "/home/developer/workspace/src": "${workspaceFolder}/src"
+            },
+            "preLaunchTask": "Build C++ in Docker"
+        },
+        {
             "name": "Debug Local Binary (compiled in Docker)",
             "type": "cppdbg",
             "request": "launch",

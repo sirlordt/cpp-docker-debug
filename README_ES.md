@@ -46,6 +46,19 @@ El entorno Docker incluye:
 - Conan (última versión 2.x, instalado con pip)
 - GDB y otras herramientas de desarrollo
 
+### Configuración del Proyecto
+
+El nombre del proyecto se define en el archivo `.env` en el directorio raíz:
+
+```
+PROJECT_NAME=my_cpp_app
+```
+
+Este nombre se utiliza para:
+- El nombre del ejecutable principal
+- El nombre del contenedor de distribución
+- La ruta dentro del contenedor de distribución
+
 ### Gestión de dependencias con Conan
 
 Este proyecto utiliza Conan 2.x para la gestión de dependencias. El archivo `conanfile.txt` en el directorio raíz define las dependencias del proyecto y los generadores:
@@ -78,6 +91,35 @@ Para añadir una nueva dependencia:
 El proyecto utiliza CMake como sistema de compilación. El archivo `CMakeLists.txt` principal en el directorio raíz configura el proyecto, y el archivo `src/CMakeLists.txt` define los ejecutables.
 
 El proceso de compilación está integrado con Conan, que genera los archivos CMake necesarios para la gestión de dependencias.
+
+### Contenedor de Distribución
+
+El proyecto incluye un contenedor de distribución que empaqueta el ejecutable compilado con todas las dependencias de tiempo de ejecución necesarias. Este contenedor está basado en Ubuntu y está diseñado para despliegue.
+
+Para construir el contenedor de distribución:
+
+```bash
+./build-dist.sh
+```
+
+Este script:
+1. Lee el nombre del proyecto del archivo `.env`
+2. Compila el proyecto si es necesario
+3. Crea un contenedor con un nombre basado en la fecha y hora (por ejemplo, `my_cpp_app-2025-04-11-06-49-01PM-TZ`)
+4. Copia el ejecutable a `/app/my_cpp_app/my_cpp_app` dentro del contenedor
+5. Instala las dependencias de tiempo de ejecución necesarias
+
+El contenedor puede ejecutarse con:
+
+```bash
+docker run --rm my_cpp_app-TIMESTAMP
+```
+
+O con una shell interactiva:
+
+```bash
+docker run --rm -it my_cpp_app-TIMESTAMP /bin/bash
+```
 
 ### Configuración
 

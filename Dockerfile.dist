@@ -1,0 +1,60 @@
+FROM ubuntu:22.04
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Define app name and maintainer for both build and runtime
+ENV APP_NAME="my_cpp_app"
+ENV App_Version="2025-04-11_09-19-24_PM_-0700"
+ENV App_Package_Dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04"
+ENV App_Maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
+ENV APP_PATH="/app/my_cpp_app/my_cpp_app"
+
+# Add metadata
+LABEL maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
+LABEL version="2025-04-11_09-19-24_PM_-0700"
+LABEL description="C++ application for debugging demonstration"
+LABEL app.version="2025-04-11_09-19-24_PM_-0700"
+LABEL app.dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04"
+LABEL app.maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
+LABEL app.path="/app/my_cpp_app/my_cpp_app"
+
+# Create app directory
+RUN mkdir -p /app/my_cpp_app
+
+# Copy the executable
+COPY ./build/bin/main /app/my_cpp_app/my_cpp_app
+
+# Install dependencies
+# Automatically detected dependencies for the executable
+RUN apt-get update && \
+    apt-get install -y \
+    libc6 \
+    libgcc-s1 \
+    libstdc++6 \
+# Package versions:
+# - libc6: 2.35-0ubuntu3.9
+# - libgcc-s1: 12.3.0-1ubuntu1~22.04
+# - libstdc++6: 12.3.0-1ubuntu1~22.04
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verify that all required shared libraries are available
+RUN echo "Verifying shared library dependencies..." && \
+    ldd /app/my_cpp_app/my_cpp_app | grep -v "linux-vdso.so.1" | \
+    awk 'BEGIN{status=0} {if($3=="not" && $4=="found"){print "Missing:",$1; status=1}} END{exit status}' || \
+    (echo "Error: Missing shared libraries detected!" && exit 1)
+
+# Set working directory
+WORKDIR /app/my_cpp_app
+
+# Make the executable executable
+RUN chmod +x /app/my_cpp_app/my_cpp_app
+
+# Add a health check
+# For a short-lived application, we just check if the executable exists
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \
+  CMD test -x /app/my_cpp_app/my_cpp_app || exit 1
+
+# Command to run when container starts
+CMD ["/bin/sh", "-c", "/app/my_cpp_app/my_cpp_app"]

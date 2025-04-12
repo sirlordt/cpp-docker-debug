@@ -1,0 +1,3 @@
+APP_NAME=my_cpp_app
+APP_MAINTAINER="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
+APP_PATH=/ruta/al/app

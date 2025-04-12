@@ -46,6 +46,19 @@ The Docker environment includes:
 - Conan (latest version 2.x, installed with pip)
 - GDB and other development tools
 
+### Project Configuration
+
+The project name is defined in the `.env` file in the root directory:
+
+```
+PROJECT_NAME=my_cpp_app
+```
+
+This name is used for:
+- The main executable name
+- The distribution container name
+- The path within the distribution container
+
 ### Dependency Management with Conan
 
 This project uses Conan 2.x for dependency management. The `conanfile.txt` file in the root directory defines the project dependencies and generators:
@@ -78,6 +91,35 @@ To add a new dependency:
 The project uses CMake as the build system. The main `CMakeLists.txt` file in the root directory sets up the project, and the `src/CMakeLists.txt` file defines the executables.
 
 The build process is integrated with Conan, which generates the necessary CMake files for dependency management.
+
+### Distribution Container
+
+The project includes a distribution container that packages the compiled executable with all necessary runtime dependencies. This container is based on Ubuntu and is designed for deployment.
+
+To build the distribution container:
+
+```bash
+./build-dist.sh
+```
+
+This script:
+1. Reads the project name from the `.env` file
+2. Builds the project if needed
+3. Creates a container with a timestamp-based name (e.g., `my_cpp_app-2025-04-11-06-49-01PM-TZ`)
+4. Copies the executable to `/app/my_cpp_app/my_cpp_app` inside the container
+5. Installs necessary runtime dependencies
+
+The container can be run with:
+
+```bash
+docker run --rm my_cpp_app-TIMESTAMP
+```
+
+Or with an interactive shell:
+
+```bash
+docker run --rm -it my_cpp_app-TIMESTAMP /bin/bash
+```
 
 ### Setup
 

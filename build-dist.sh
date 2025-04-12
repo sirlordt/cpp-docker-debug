@@ -20,6 +20,11 @@ if [ -z "$App_Name" ]; then
     exit 1
 fi
 
+if [ -z "$App_Description" ]; then
+    echo "Error: App_Description not defined in .build_env file"
+    exit 1
+fi
+
 # Create build directory if it doesn't exist
 mkdir -p build/bin
 
@@ -233,12 +238,13 @@ ENV App_Name="${App_Name}"
 ENV App_Version="${APP_VERSION}"
 ENV App_Package_Dependencies="${APP_PACKAGE_DEPENDENCIES}"
 ENV App_Maintainer="${App_Maintainer}"
+ENV App_Description="${App_Description}"
 ENV App_Path="/app/${App_Name}/${App_Name}"
 
 # Add metadata
 LABEL maintainer="${App_Maintainer}"
 LABEL version="${APP_VERSION:-1.0}"
-LABEL description="C++ application for debugging demonstration"
+LABEL description="${App_Description}"
 LABEL app.version="${APP_VERSION}"
 LABEL app.dependencies="${APP_PACKAGE_DEPENDENCIES}"
 LABEL app.maintainer="${App_Maintainer}"

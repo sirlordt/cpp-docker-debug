@@ -89,7 +89,7 @@ if [[ "$file_type" != *"dynamically linked"* ]]; then
     echo "/lib/x86_64-linux-gnu/libc.so.6" >> "$TEMP_DIR/libs.txt"
 else
     # Extract dependencies
-    ldd "build/bin/$App_Name" | grep "=>" | awk '{print $3}' | grep -v "linux-vdso.so" > "$TEMP_DIR/libs.txt"
+    ldd "build/bin/$App_Name" | grep "=>" | grep -v "not found" | awk '{print $3}' | grep -v "linux-vdso.so" > "$TEMP_DIR/libs.txt"
 fi
 
 echo "Found $(wc -l < "$TEMP_DIR/libs.txt") shared libraries."

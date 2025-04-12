@@ -15,11 +15,13 @@ int sumVector(const std::vector<int>& numbers) {
     return sum;
 }
 
+/*
 // Function to help with debugging
 void debug_break() {
     // This will cause a SIGTRAP which the debugger will catch
     raise(SIGTRAP);
 }
+*/
 
 // Function that the compiler can't optimize away
 void breakpoint_function(int line) {
@@ -35,7 +37,7 @@ int main() {
     // Call a function that the compiler can't optimize away
     breakpoint_function(27); // Set breakpoint here (line 27)
     
-    std::cout << "C++ Debugging Demo 2025-01" << std::endl;
+    std::cout << "C++ Debugging Demo 2025-04-12" << std::endl;
     
     // Call a function that the compiler can't optimize away
     breakpoint_function(33); // Set breakpoint here (line 33)
@@ -49,9 +51,14 @@ int main() {
     // Print the result
     std::cout << "The sum is: " << result << std::endl;
     
+    // Introduce a memory error for sanitizer to detect
+    int* ptr = new int[5];
+    ptr[5] = 10;  // Out of bounds access
+    delete[] ptr;
+    
     // Call a function that the compiler can't optimize away
     breakpoint_function(45); // Set breakpoint here (line 45)
-    debug_break(); // This will force a break
+    //debug_break(); // This will force a break
     
     return 0;
 }

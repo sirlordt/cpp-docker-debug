@@ -36,8 +36,8 @@ case "$1" in
         docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/build/bin && ./sample'
         ;;
     cpp)
-        echo "Running C++ program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace/build/bin && ./main'
+        echo "Running C++ program with AddressSanitizer logging..."
+        docker exec -u developer cpp-dev-container bash -c 'mkdir -p /home/developer/workspace/build/bin/logs && cd /home/developer/workspace/build/bin && ASAN_OPTIONS="log_path=/home/developer/workspace/build/bin/logs/asan.log" ./main'
         ;;
     *)
         usage

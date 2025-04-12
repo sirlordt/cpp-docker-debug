@@ -39,7 +39,7 @@ case "$1" in
         ;;
     cpp)
         echo "Building C++ program..."
-        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build . --target main'
+        docker exec -u developer cpp-dev-container bash -c 'cd /home/developer/workspace && mkdir -p build && cd build && conan install .. --output-folder=. --build=missing && cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Debug && cmake --build .'
         echo "C++ program built successfully."
         ;;
     all)

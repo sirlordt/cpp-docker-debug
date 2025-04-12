@@ -5,37 +5,44 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Define app name and maintainer for both build and runtime
 ENV App_Name="my_cpp_app"
-ENV App_Version="2025-04-11_09-36-58_PM_-0700"
-ENV App_Package_Dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04"
+ENV App_Version="2025-04-12_12-27-02_PM_-0700"
+ENV App_Package_Dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04;libubsan1:12.3.0-1ubuntu1~22.04;perl-modules-5.34:5.34.0-3ubuntu1.3"
 ENV App_Maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
 ENV App_Path="/app/my_cpp_app/my_cpp_app"
 
 # Add metadata
 LABEL maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
-LABEL version="2025-04-11_09-36-58_PM_-0700"
+LABEL version="2025-04-12_12-27-02_PM_-0700"
 LABEL description="C++ application for debugging demonstration"
-LABEL app.version="2025-04-11_09-36-58_PM_-0700"
-LABEL app.dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04"
+LABEL app.version="2025-04-12_12-27-02_PM_-0700"
+LABEL app.dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04;libubsan1:12.3.0-1ubuntu1~22.04;perl-modules-5.34:5.34.0-3ubuntu1.3"
 LABEL app.maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
 LABEL app.path="/app/my_cpp_app/my_cpp_app"
 
-# Create app directory
-RUN mkdir -p /app/my_cpp_app
+# Create app directory and logs directory
+RUN mkdir -p /app/my_cpp_app/logs
 
-# Copy the executable
+# Copy the executable (using the symlink for backward compatibility)
 COPY ./build/bin/main /app/my_cpp_app/my_cpp_app
 
 # Install dependencies
-# Automatically detected dependencies for the executable
+# Automatically detected dependencies for the executable and sanitizers
 RUN apt-get update && \
     apt-get install -y \
+    libasan6 \
+    libubsan1 \
+    liblsan0 \
     libc6 \
     libgcc-s1 \
     libstdc++6 \
+    libubsan1 \
+    perl-modules-5.34 \
 # Package versions:
 # - libc6: 2.35-0ubuntu3.9
 # - libgcc-s1: 12.3.0-1ubuntu1~22.04
 # - libstdc++6: 12.3.0-1ubuntu1~22.04
+# - libubsan1: 12.3.0-1ubuntu1~22.04
+# - perl-modules-5.34: 5.34.0-3ubuntu1.3
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -56,5 +63,5 @@ RUN chmod +x /app/my_cpp_app/my_cpp_app
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \
   CMD test -x /app/my_cpp_app/my_cpp_app || exit 1
 
-# Command to run when container starts
-CMD ["/bin/sh", "-c", "/app/my_cpp_app/my_cpp_app"]
+# Command to run when container starts with ASAN log path
+CMD ["/bin/sh", "-c", "mkdir -p /app/my_cpp_app/logs && ASAN_OPTIONS=\"log_path=/app/my_cpp_app/logs/asan.log\" /app/my_cpp_app/my_cpp_app"]

@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-dev \
+    libasan6 \
+    libubsan1 \
+    liblsan0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -45,8 +48,16 @@ RUN usermod -aG sudo developer
 RUN mkdir -p /home/developer/workspace
 WORKDIR /home/developer/workspace
 
+# Create logs directory
+RUN mkdir -p /home/developer/workspace/build/bin/logs
+
 # Give developer user ownership
 RUN chown -R developer:developer /home/developer
+
+# Create Conan default profile
+USER developer
+RUN conan profile detect
+USER root
 
 # Expose ports for SSH and gdbserver
 EXPOSE 22 2222 7777

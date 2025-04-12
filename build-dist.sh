@@ -15,11 +15,6 @@ if [ -z "$App_Maintainer" ]; then
     exit 1
 fi
 
-if [ -z "$App_Path" ]; then
-    echo "Error: App_Path not defined in .build_env file"
-    exit 1
-fi
-
 if [ -z "$App_Name" ]; then
     echo "Error: App_Name not defined in .build_env file"
     exit 1
@@ -249,16 +244,19 @@ LABEL app.dependencies="${APP_PACKAGE_DEPENDENCIES}"
 LABEL app.maintainer="${App_Maintainer}"
 LABEL app.path="/app/${App_Name}/${App_Name}"
 
-# Create app directory
-RUN mkdir -p /app/${App_Name}
+# Create app directory and logs directory
+RUN mkdir -p /app/${App_Name}/logs
 
-# Copy the executable
+# Copy the executable (using the symlink for backward compatibility)
 COPY ./build/bin/main /app/${App_Name}/${App_Name}
 
 # Install dependencies
-# Automatically detected dependencies for the executable
+# Automatically detected dependencies for the executable and sanitizers
 RUN apt-get update && \\
     apt-get install -y \\
+    libasan6 \\
+    libubsan1 \\
+    liblsan0 \\
 EOF
 
 # Add the packages to the Dockerfile.dist (without comments as they cause Docker parsing errors)
@@ -296,8 +294,8 @@ RUN chmod +x /app/${App_Name}/${App_Name}
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \\
   CMD test -x /app/${App_Name}/${App_Name} || exit 1
 
-# Command to run when container starts
-CMD ["/bin/sh", "-c", "/app/${App_Name}/${App_Name}"]
+# Command to run when container starts with ASAN log path
+CMD ["/bin/sh", "-c", "mkdir -p /app/${App_Name}/logs && ASAN_OPTIONS=\\"log_path=/app/${App_Name}/logs/asan.log\\" /app/${App_Name}/${App_Name}"]
 EOF
 
 echo "Dockerfile.dist generated with detected dependencies."

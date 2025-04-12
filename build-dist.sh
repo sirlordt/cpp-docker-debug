@@ -10,13 +10,18 @@ else
     exit 1
 fi
 
-if [ -z "$APP_MAINTAINER" ]; then
-    echo "Error: APP_MAINTAINER not defined in .build_env file"
+if [ -z "$App_Maintainer" ]; then
+    echo "Error: App_Maintainer not defined in .build_env file"
     exit 1
 fi
 
-if [ -z "$APP_NAME" ]; then
-    echo "Error: APP_NAME not defined in .build_env file"
+if [ -z "$App_Path" ]; then
+    echo "Error: App_Path not defined in .build_env file"
+    exit 1
+fi
+
+if [ -z "$App_Name" ]; then
+    echo "Error: App_Name not defined in .build_env file"
     exit 1
 fi
 
@@ -24,24 +29,24 @@ fi
 mkdir -p build/bin
 
 # Check if we need to build the project
-if [ ! -f "build/bin/$APP_NAME" ]; then
-    echo "Executable '$APP_NAME' not found in build/bin/"
+if [ ! -f "build/bin/$App_Name" ]; then
+    echo "Executable '$App_Name' not found in build/bin/"
     echo "Building the project first..."
     ./build.sh cpp
 fi
 
 # Check if the build was successful
-if [ ! -f "build/bin/$APP_NAME" ]; then
+if [ ! -f "build/bin/$App_Name" ]; then
     echo "Error: Failed to build the project"
     
     # Create a dummy executable for testing the container
     echo "Creating a dummy executable for testing..."
     echo '#!/bin/bash
 echo "This is a dummy executable for testing the container"
-echo "App name: $APP_NAME"
+echo "App name: $App_Name"
 echo "Container timestamp: $TIMESTAMP"
-' > build/bin/$APP_NAME
-    chmod +x build/bin/$APP_NAME
+' > build/bin/$App_Name
+    chmod +x build/bin/$App_Name
 fi
 
 # Generate timestamp for App_Version with the format YYYY-MM-DD_HH-MM-SS_AM_Z
@@ -49,9 +54,9 @@ fi
 # %I = hour (01-12), %M = minute (00-59), %S = second (00-59)
 # %p = AM/PM, %z = timezone offset (e.g., -0700)
 APP_VERSION=$(date '+%Y-%m-%d_%I-%M-%S_%p_%z')
-CONTAINER_NAME="${APP_NAME}"
+CONTAINER_NAME="${App_Name}"
 
-echo "Analyzing dependencies for $APP_NAME..."
+echo "Analyzing dependencies for $App_Name..."
 
 # Create a temporary directory for dependency analysis
 TEMP_DIR=$(mktemp -d)
@@ -65,16 +70,16 @@ trap cleanup EXIT
 # Get the list of shared libraries that the executable depends on
 echo "Extracting shared library dependencies..."
 # Check if the file exists and is executable
-if [ ! -f "build/bin/$APP_NAME" ]; then
-    echo "Error: Executable not found at build/bin/$APP_NAME"
+if [ ! -f "build/bin/$App_Name" ]; then
+    echo "Error: Executable not found at build/bin/$App_Name"
     exit 1
 fi
 
 # Make sure it's executable
-chmod +x "build/bin/$APP_NAME"
+chmod +x "build/bin/$App_Name"
 
 # Check if it's a dynamic executable
-file_type=$(file "build/bin/$APP_NAME")
+file_type=$(file "build/bin/$App_Name")
 echo "File type: $file_type"
 
 if [[ "$file_type" != *"dynamically linked"* ]]; then
@@ -84,7 +89,7 @@ if [[ "$file_type" != *"dynamically linked"* ]]; then
     echo "/lib/x86_64-linux-gnu/libc.so.6" >> "$TEMP_DIR/libs.txt"
 else
     # Extract dependencies
-    ldd "build/bin/$APP_NAME" | grep "=>" | awk '{print $3}' | grep -v "linux-vdso.so" > "$TEMP_DIR/libs.txt"
+    ldd "build/bin/$App_Name" | grep "=>" | awk '{print $3}' | grep -v "linux-vdso.so" > "$TEMP_DIR/libs.txt"
 fi
 
 echo "Found $(wc -l < "$TEMP_DIR/libs.txt") shared libraries."
@@ -158,7 +163,7 @@ RUN apt-file update
 RUN mkdir -p /app
 
 # Copy the executable and dependency list
-COPY build/bin/$APP_NAME /app/$APP_NAME
+COPY build/bin/$App_Name /app/$App_Name
 COPY libs.txt /app/libs.txt
 COPY find_packages.sh /app/find_packages.sh
 
@@ -229,26 +234,26 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Define app name and maintainer for both build and runtime
-ENV APP_NAME="${APP_NAME}"
+ENV App_Name="${App_Name}"
 ENV App_Version="${APP_VERSION}"
 ENV App_Package_Dependencies="${APP_PACKAGE_DEPENDENCIES}"
-ENV App_Maintainer="${APP_MAINTAINER}"
-ENV APP_PATH="/app/${APP_NAME}/${APP_NAME}"
+ENV App_Maintainer="${App_Maintainer}"
+ENV App_Path="/app/${App_Name}/${App_Name}"
 
 # Add metadata
-LABEL maintainer="${APP_MAINTAINER}"
+LABEL maintainer="${App_Maintainer}"
 LABEL version="${APP_VERSION:-1.0}"
 LABEL description="C++ application for debugging demonstration"
 LABEL app.version="${APP_VERSION}"
 LABEL app.dependencies="${APP_PACKAGE_DEPENDENCIES}"
-LABEL app.maintainer="${APP_MAINTAINER}"
-LABEL app.path="/app/${APP_NAME}/${APP_NAME}"
+LABEL app.maintainer="${App_Maintainer}"
+LABEL app.path="/app/${App_Name}/${App_Name}"
 
 # Create app directory
-RUN mkdir -p /app/${APP_NAME}
+RUN mkdir -p /app/${App_Name}
 
 # Copy the executable
-COPY ./build/bin/main /app/${APP_NAME}/${APP_NAME}
+COPY ./build/bin/main /app/${App_Name}/${App_Name}
 
 # Install dependencies
 # Automatically detected dependencies for the executable
@@ -276,23 +281,23 @@ cat >> Dockerfile.dist << EOF
 
 # Verify that all required shared libraries are available
 RUN echo "Verifying shared library dependencies..." && \\
-    ldd /app/${APP_NAME}/${APP_NAME} | grep -v "linux-vdso.so.1" | \\
+    ldd /app/${App_Name}/${App_Name} | grep -v "linux-vdso.so.1" | \\
     awk 'BEGIN{status=0} {if(\$3=="not" && \$4=="found"){print "Missing:",\$1; status=1}} END{exit status}' || \\
     (echo "Error: Missing shared libraries detected!" && exit 1)
 
 # Set working directory
-WORKDIR /app/${APP_NAME}
+WORKDIR /app/${App_Name}
 
 # Make the executable executable
-RUN chmod +x /app/${APP_NAME}/${APP_NAME}
+RUN chmod +x /app/${App_Name}/${App_Name}
 
 # Add a health check
 # For a short-lived application, we just check if the executable exists
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s --retries=3 \\
-  CMD test -x /app/${APP_NAME}/${APP_NAME} || exit 1
+  CMD test -x /app/${App_Name}/${App_Name} || exit 1
 
 # Command to run when container starts
-CMD ["/bin/sh", "-c", "/app/${APP_NAME}/${APP_NAME}"]
+CMD ["/bin/sh", "-c", "/app/${App_Name}/${App_Name}"]
 EOF
 
 echo "Dockerfile.dist generated with detected dependencies."
@@ -300,14 +305,14 @@ echo "Dockerfile.dist generated with detected dependencies."
 echo "Building distribution container: $CONTAINER_NAME"
 
 # Create a tag-friendly path (replace slashes with periods)
-APP_PATH_TAG=$(echo "/app/${APP_NAME}/${APP_NAME}" | tr '/' '.')
+App_Path_TAG=$(echo "/app/${App_Name}/${App_Name}" | tr '/' '.')
 
 # Build the distribution container with tags for version, dependencies, and path
 docker build \
     -t $CONTAINER_NAME \
     -t $CONTAINER_NAME:$APP_VERSION \
     -t $CONTAINER_NAME:latest \
-    -t $CONTAINER_NAME:path${APP_PATH_TAG} \
+    -t $CONTAINER_NAME:path${App_Path_TAG} \
     -f Dockerfile.dist .
 
 echo "Container built successfully: $CONTAINER_NAME"

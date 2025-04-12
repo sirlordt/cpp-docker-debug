@@ -4,17 +4,17 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Define app name and maintainer for both build and runtime
-ENV APP_NAME="my_cpp_app"
-ENV App_Version="2025-04-11_09-19-24_PM_-0700"
+ENV App_Name="my_cpp_app"
+ENV App_Version="2025-04-11_09-36-58_PM_-0700"
 ENV App_Package_Dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04"
 ENV App_Maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
-ENV APP_PATH="/app/my_cpp_app/my_cpp_app"
+ENV App_Path="/app/my_cpp_app/my_cpp_app"
 
 # Add metadata
 LABEL maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
-LABEL version="2025-04-11_09-19-24_PM_-0700"
+LABEL version="2025-04-11_09-36-58_PM_-0700"
 LABEL description="C++ application for debugging demonstration"
-LABEL app.version="2025-04-11_09-19-24_PM_-0700"
+LABEL app.version="2025-04-11_09-36-58_PM_-0700"
 LABEL app.dependencies="libc6:2.35-0ubuntu3.9;libgcc-s1:12.3.0-1ubuntu1~22.04;libstdc++6:12.3.0-1ubuntu1~22.04"
 LABEL app.maintainer="Developer 1<developer1@domain.com>;Developer 2 <developer2@domain.com>"
 LABEL app.path="/app/my_cpp_app/my_cpp_app"
